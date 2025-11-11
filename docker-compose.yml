@@ -1,0 +1,24 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tcmp-fin-app
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin123}
+      - SERVICE_ACCOUNT_PATH=/app/service-account.json
+      - FRONTEND_DIR=/app/frontend/dist
+    volumes:
+      # Mount service account file if it exists locally
+      - ./backend/service-account.json:/app/service-account.json:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/api/attendees/count"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+

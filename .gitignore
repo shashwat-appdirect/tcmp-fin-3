@@ -1,0 +1,48 @@
+# Sensitive files
+**/service-account.json
+*.json
+!package.json
+!package-lock.json
+!tsconfig.json
+!eslint.config.js
+!vite.config.js
+
+# Dependencies
+node_modules/
+vendor/
+
+# Build outputs
+dist/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Go specific
+*.test
+*.out
+
+# Temporary files
+*.tmp
+*.temp
+
