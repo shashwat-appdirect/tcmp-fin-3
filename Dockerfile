@@ -61,9 +61,14 @@ EXPOSE 8080
 
 # Set environment variables
 ENV PORT=8080
-ENV ADMIN_PASSWORD=admin123
+ARG ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin123}
+ENV ADMIN_PASSWORD=${ADMIN_PASSWORD}
 ENV SERVICE_ACCOUNT_PATH=/app/service-account.json
 ENV FRONTEND_DIR=/app/frontend/dist
+# Note: For Google Cloud Run deployment:
+# - GOOGLE_CLOUD_PROJECT is automatically set by Cloud Run
+# - CLIENT_ID must be set as an environment variable in Cloud Run (this is your custom client identifier)
+# - The service account file is not needed when using Application Default Credentials (ADC)
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \

@@ -20,7 +20,7 @@ func main() {
 
 	// Initialize Firestore
 	ctx := context.Background()
-	if err := firestore.InitializeFirestore(ctx, cfg.ServiceAccountPath); err != nil {
+	if err := firestore.InitializeFirestore(ctx, cfg.ServiceAccountPath, cfg.GCPProjectID, cfg.ClientID); err != nil {
 		log.Fatalf("Failed to initialize Firestore: %v", err)
 	}
 	log.Printf("Firestore initialized with client_id: %s", firestore.ClientID)

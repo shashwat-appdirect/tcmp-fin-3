@@ -17,7 +17,40 @@ var (
 )
 
 // InitializeFirestore initializes the Firestore client and extracts client_id
-func InitializeFirestore(ctx context.Context, serviceAccountPath string) error {
+// If serviceAccountPath is provided and file exists, uses file-based authentication
+// Otherwise, uses Application Default Credentials (ADC) - suitable for Cloud Run
+func InitializeFirestore(ctx context.Context, serviceAccountPath string, gcpProjectID string, clientID string) error {
+	// Check if service account file exists
+	if serviceAccountPath != "" {
+		if _, err := os.Stat(serviceAccountPath); err == nil {
+			// File exists, use file-based authentication
+			return initializeWithFile(ctx, serviceAccountPath)
+		}
+	}
+
+	// File doesn't exist or path is empty, use Application Default Credentials (ADC)
+	// This is the case for Google Cloud Run
+	if gcpProjectID == "" {
+		return fmt.Errorf("GOOGLE_CLOUD_PROJECT or GCP_PROJECT environment variable is required when service account file is not available")
+	}
+	if clientID == "" {
+		return fmt.Errorf("CLIENT_ID environment variable is required when service account file is not available")
+	}
+
+	projectID = gcpProjectID
+	ClientID = clientID
+
+	// Initialize Firestore client with ADC (no credentials file needed)
+	Client, err := firestore.NewClient(ctx, projectID)
+	if err != nil {
+		return fmt.Errorf("failed to create Firestore client with ADC: %w", err)
+	}
+
+	return nil
+}
+
+// initializeWithFile initializes Firestore using a service account file
+func initializeWithFile(ctx context.Context, serviceAccountPath string) error {
 	// Read service account JSON
 	data, err := os.ReadFile(serviceAccountPath)
 	if err != nil {
