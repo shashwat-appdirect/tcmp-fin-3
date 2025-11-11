@@ -41,7 +41,8 @@ func InitializeFirestore(ctx context.Context, serviceAccountPath string, gcpProj
 	ClientID = clientID
 
 	// Initialize Firestore client with ADC (no credentials file needed)
-	Client, err := firestore.NewClient(ctx, projectID)
+	var err error
+	Client, err = firestore.NewClient(ctx, projectID)
 	if err != nil {
 		return fmt.Errorf("failed to create Firestore client with ADC: %w", err)
 	}
