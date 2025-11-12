@@ -30,7 +30,7 @@ func main() {
 	// Setup router
 	r := mux.NewRouter()
 
-	// API routes
+	// API routes (must be registered before static file serving)
 	api := r.PathPrefix("/api").Subrouter()
 
 	// Public routes
@@ -48,6 +48,16 @@ func main() {
 	api.HandleFunc("/admin/speakers", handlers.AdminMiddleware(handlers.AddOrUpdateSpeaker)).Methods("POST")
 	api.HandleFunc("/admin/speakers/{id}", handlers.AdminMiddleware(handlers.DeleteSpeaker)).Methods("DELETE")
 	api.HandleFunc("/admin/stats", handlers.AdminMiddleware(handlers.GetStats)).Methods("GET")
+
+	// Serve static files (frontend build) - must be after API routes
+	staticDir := "./static"
+	if _, err := os.Stat(staticDir); err == nil {
+		// Serve static files for all non-API routes
+		r.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir(staticDir))))
+		log.Println("Serving static files from ./static")
+	} else {
+		log.Println("Static directory not found, API-only mode")
+	}
 
 	// CORS configuration
 	c := cors.New(cors.Options{
