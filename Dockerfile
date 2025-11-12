@@ -24,10 +24,11 @@ WORKDIR /app/backend
 RUN apk add --no-cache git
 
 # Copy go mod files
-COPY backend/go.mod backend/go.sum* ./
+COPY backend/go.mod ./
+COPY backend/go.sum* ./
 
-# Download dependencies
-RUN go mod download
+# Download dependencies and verify checksums
+RUN go mod download && go mod verify
 
 # Copy backend source
 COPY backend/ ./

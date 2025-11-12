@@ -41,7 +41,7 @@ logs/
 # Go
 *.test
 *.out
-go.sum
+# Note: go.sum should be committed for reproducible builds
 
 # Frontend
 .vite/
